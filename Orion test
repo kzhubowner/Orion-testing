@@ -1,20 +1,12 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
-local MainWindow = OrionLib:MakeWindow({Name = "Main", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
-local MainTab = Window:MakeTab({
-    	Name = "Fly",
+local MainWindow = OrionLib:MakeWindow({Name = "ORION TESTING", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local DupeTab = Window:MakeTab({
+	Name = "Dupes",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
-
-local Section = MainTab:AddSection({
-	Name = "Main"
-})
-
-MainTab:AddButton({
-	Name = "Fly",
-	Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-      		print("Executed")
-  	end    
-})
+       
+      		
+     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
