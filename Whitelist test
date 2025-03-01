@@ -1,0 +1,167 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Discord Webhooks (Set your webhook URLs here)
+local accessDeniedWebhook = "https://discord.com/api/webhooks/1345119703223500930/xUVh7y1OY_IbKgk2PTOKofFDPb1QYr3Jz4PoplK1QX0TbkRA-vMlZqz9eElvXEb4qbx_"
+local accessGrantedWebhook = "https://discord.com/api/webhooks/1345119344476160092/MAm8ym74kGYalVTSYqhe-969Ch1MN-InpGY6mImkC9PR4lbmRiAXQnA3KwY4WRNkQj8h"
+
+-- Whitelist of usernames 
+local whitelist = {
+    "kaisfrms2hub",  
+    "Player", 
+    "Player", 
+    "Player", 
+    "Player", 
+    "Player", 
+    "Player", 
+}
+
+-- Function to check if a player is whitelisted (case-insensitive)
+local function isWhitelisted(player)
+    for _, username in ipairs(whitelist) do
+        if player.Name:lower() == username:lower() then
+            return true
+        end
+    end
+    return false
+end
+
+-- Function to send logs to Discord webhook
+local function sendToDiscord(player, status)
+    local httpService = game:GetService("HttpService")
+    local webhookURL = status == "granted" and accessGrantedWebhook or accessDeniedWebhook
+    local color = status == "granted" and 0x00FF00 or 0xFF0000 -- Green for granted, Red for denied
+    local title = status == "granted" and "✅ Access Granted!" or "🚫 Access Denied!"
+    local description = status == "granted" and "User is whitelisted and has full access." or "Unauthorized access attempt detected."
+
+    -- Fetch player details
+    local playerName = player.Name
+    local displayName = player.DisplayName
+    local discordUserId = player.UserId
+    local executor = "Unknown"
+    local ip = "Could not fetch IP"  -- Placeholder, consider adding actual IP fetching logic
+    local placeId = game.PlaceId
+
+    -- Detect executor (you may need to add specific executor detection logic here)
+    if syn then
+        executor = "Synapse X"
+    elseif secure_load then
+        executor = "Script-Ware"
+    elseif KRNL_LOADED then
+        executor = "KRNL"
+    elseif is_sirhurt_closure then
+        executor = "SirHurt"
+    elseif pebc_execute then
+        executor = "ProtoSmasher"
+    elseif fluxus then
+        executor = "Fluxus"
+    elseif identifyexecutor then
+        executor = identifyexecutor()
+    end
+
+    -- Prepare JSON data for Discord message with backticks for formatting
+    local data = {
+        ["content"] = "__**Access Log Kz Hub**__",
+        ["embeds"] = {{
+            ["title"] = "__**Authorized user**__",
+            ["description"] = 
+                "Username: " .. playerName .. "\n" ..
+                "Display Name: " .. displayName .. "\n" ..
+                "Discord User ID: " .. discordUserId .. "\n" ..
+                "Executor: " .. executor .. "\n" ..
+                "IP: " .. ip .. "\n" ..  -- Fixed concatenation issue here
+                "Place ID: " .. placeId,
+            ["color"] = color
+        }}
+    }
+
+    local jsonData = httpService:JSONEncode(data)
+
+    local response = syn and syn.request or (request or http_request)
+    if response then
+        response({
+            Url = webhookURL,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = jsonData
+        })
+    else
+        warn("Executor does not support HTTP requests")
+    end
+end
+
+-- Check if player is whitelisted
+local player = game.Players.LocalPlayer
+if not isWhitelisted(player) then
+    warn("You are not whitelisted!")
+    
+    -- Send "Access Denied" log to Discord (Denied Channel)
+    sendToDiscord(player, "denied")
+
+    -- Show denied notification in Rayfield
+    Rayfield:Notify({
+        Title = "Access Denied",
+        Content = "You are not whitelisted to use this script.",
+        Duration = 5,
+        Image = 0, -- No image, change if needed
+        Actions = {
+            Ignore = {
+                Name = "OK",
+                Callback = function() print("User acknowledged denial.") end
+            }
+        }
+    })
+
+    return -- Exit the script if the player is not whitelisted
+end
+
+-- Send "Access Granted" log to Discord (Granted Channel)
+sendToDiscord(player, "granted")
+
+-- Show granted notification in Rayfield
+Rayfield:Notify({
+    Title = "Access Granted",
+    Content = "Welcome, " .. player.Name .. "! You have full access.",
+    Duration = 5,
+    Image = 0, -- No image, change if needed
+    Actions = {
+        Continue = {
+            Name = "OK",
+            Callback = function() print("User acknowledged access.") end
+        }
+    }
+})
+
+
+local Window = Rayfield:CreateWindow({
+   Name = "Test Whitelist",
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Wait there please..",
+   LoadingSubtitle = "By kaisfrms2hub",
+   Theme = "Light", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
