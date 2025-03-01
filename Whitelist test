@@ -141,7 +141,7 @@ local Window = Rayfield:CreateWindow({
 
 
 local InfmoneyTab = Window:CreateTab("Inf Money", 4483362458) -- Title, Image
-local Card DupeSection = InfmoneyTab:CreateSection("Card Dupe")
+local CardDupeSection = InfmoneyTab:CreateSection("Card Dupe")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -149,7 +149,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local player = Players.LocalPlayer
 
 local dupeAmount = 10
-local StatusLabel = MainTab:CreateLabel("Status: Waiting for action...")
+local StatusLabel = InfmoneyTab:CreateLabel("Status: Waiting for action...")
 
 -- Notification function with error handling
 local function notify(message, time, type)
@@ -167,7 +167,7 @@ local function notify(message, time, type)
 end
 
 -- Textbox for Duplication Amount
-MainTab:CreateInput({
+InfmoneyTab:CreateInput({
     Name = "Enter Card Dupe Amount",
     PlaceholderText = "10",
     RemoveTextAfterFocusLost = false,
@@ -284,7 +284,7 @@ local function duplicateCardsAndLaptops()
 end
 
 -- Button for Duplication
-MainTab:CreateButton({
+InfmoneyTab:CreateButton({
     Name = "Start Card Duplication",
     Callback = function()
         duplicateCardsAndLaptops()
