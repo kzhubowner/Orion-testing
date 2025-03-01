@@ -2,7 +2,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jen
 
 local MainWindow = OrionLib:MakeWindow({Name = "ORION TESTING", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
-local DupeTab = Window:MakeTab({
+local MainTab = Window:MakeTab({
 	Name = "Dupes",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
@@ -10,3 +10,7 @@ local DupeTab = Window:MakeTab({
        
       		
     
+
+
+end
+Orionlib:Init()
